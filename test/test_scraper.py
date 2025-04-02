@@ -31,6 +31,22 @@ def scraper_find_elements_error():
     with patch("src.web_scraper.scraper.webdriver") as mock_webdriver:
         mock_webdriver.Chrome.return_value.find_elements.side_effect = Exception("no such element")
         return Scraper(URL)
+    
+@pytest.fixture
+def scraper_find_elemets_empty():
+    with patch("src.web_scraper.scraper.webdriver") as mock_webdriver:
+        mock_webdriver.Chrome.return_value.find_elements.return_value = []
+        return Scraper(URL)
+    
+@pytest.fixture
+def scraper_find_element_error():
+    find_element_mock = Mock()
+    find_element_mock.find_element.side_effect = Exception("no such element")
+    with patch("src.web_scraper.scraper.webdriver") as mock_webdriver:
+        mock_webdriver.Chrome.return_value.find_elements.return_value = [
+            find_element_mock,
+        ]
+        return Scraper(URL)
 
 
 def test_init_driver_error():
@@ -54,9 +70,20 @@ def test_get_data(scraper_ok):
     assert data[0]["link"] == EXAMPLE_LINK, "Unexpected link data"
 
 
-def test_get_data_error(scraper_find_elements_error):
+def test_get_news_error(scraper_find_elements_error):
     with pytest.raises(Exception) as exception_raised:
         scraper_find_elements_error.get_news_data()
     assert exception_raised.type == ScraperError, "Unexpected Exception type"
-    expected_message = "[ScraperError] Error found while scraping. no such element"
+    expected_message = "[ScraperError] Could not find news data. no such element"
     assert str(exception_raised.value) == expected_message, "Unexpected error message"
+
+
+def test_get_news_data_empty(scraper_find_elemets_empty):  
+        data = scraper_find_elemets_empty.get_news_data()
+        assert data == [], "Data should be an empty list"
+
+
+def test_get_news_details_error(scraper_find_element_error, caplog):
+    with caplog.at_level("WARNING"):
+        scraper_find_element_error.get_news_data()
+    assert "Error found while scraping news. no such element" in caplog.text

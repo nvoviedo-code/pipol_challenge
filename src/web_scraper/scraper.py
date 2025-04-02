@@ -1,7 +1,10 @@
+import logging
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from .exceptions import ScraperError
+
+logger = logging.getLogger("Scraper")
 
 class Scraper():
 
@@ -11,34 +14,42 @@ class Scraper():
 
     def __init_driver(self):
         try:
+            logger.info("Initializing WebDriver.")
             config = webdriver.ChromeOptions()
             config.add_argument("--headless")
-
             web_driver = webdriver.Chrome(options=config)
-            web_driver.get(self.url)
             web_driver.implicitly_wait(10)
-            return web_driver 
+            logger.info("WebDriver initialized.")
+            
+            logger.info(f"Opening URL: {self.url}")
+            web_driver.get(self.url)
+            logger.info("URL opened successfully.")
         except Exception as e:
             raise ScraperError(f"Driver initialization failed. {e}")
+        return web_driver
 
     def get_news_data(self):
         data = []
         try:
             news_items = self.driver.find_elements(By.CLASS_NAME, "contenedor_dato_modulo")
             for new in news_items:
-                header = new.find_element(By.CLASS_NAME, "volanta_titulo")
-                title = header.find_element(By.XPATH, f".//h2").text
-                kicker = header.find_element(By.XPATH, f".//div").text
-                link = new.find_element(By.XPATH, f".//a").get_attribute("href")
-                image = new.find_element(By.XPATH, f".//img").get_attribute("src")
-                data.append({
-                    "title": title,
-                    "kicker": kicker,
-                    "image":image,
-                    "link": link})
+                try:
+                    header = new.find_element(By.XPATH, ".//div")
+                    title = header.find_element(By.XPATH, ".//h2").text
+                    kicker = header.find_element(By.XPATH, ".//div").text
+                    link = new.find_element(By.XPATH, ".//a").get_attribute("href")
+                    image = new.find_element(By.XPATH, ".//img").get_attribute("src")
+                    data.append({
+                        "title": title,
+                        "kicker": kicker,
+                        "image":image,
+                        "link": link})
+                except Exception as e:
+                    logger.warning(f"Error found while scraping news. {str(e)}")
+                    continue
             self.driver.quit()
         except Exception as e:
             self.driver.quit()
-            raise ScraperError(f"Error found while scraping. {e}")
+            raise ScraperError(f"Could not find news data. {str(e)}")
 
         return data
