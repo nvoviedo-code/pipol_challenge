@@ -1,29 +1,62 @@
 import pytest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
-from src.scraper import Scraper
+from src.web_scraper.exceptions import ScraperError
+from src.web_scraper.scraper import Scraper
 
+URL = "https://example.com"
+EXAMPLE_LINK = "https://example.com/link"
 
 @pytest.fixture
-def scraper():
-    url = "https://example.com"
-    with patch("src.scraper.webdriver") as mock_webdriver:
+def scraper_ok():
+    with patch("src.web_scraper.scraper.webdriver") as mock_webdriver:
         mock_webdriver.Chrome.return_value.get.return_value = None
         mock_webdriver.Chrome.return_value.find_elements.return_value = [
             mock_webdriver.Chrome.return_value
         ]
         mock_webdriver.Chrome.return_value.find_element.return_value = mock_webdriver.Chrome.return_value
         mock_webdriver.Chrome.return_value.find_element.return_value.text = "Test Example"
-        mock_webdriver.Chrome.return_value.find_element.return_value.get_attribute.return_value = "https://example.com/test"
-        return Scraper(url)
+        mock_webdriver.Chrome.return_value.find_element.return_value.get_attribute.return_value = EXAMPLE_LINK
+        return Scraper(URL)
 
 
-def test_get_data(scraper):
-    data = scraper.get_news_data()
+@pytest.fixture
+def scraper_web_driver_error():
+    with patch("src.web_scraper.scraper.webdriver") as mock_webdriver:
+        mock_webdriver.Chrome.side_effect = Exception("WebDriver error")
+        return Scraper(URL)
+    
+@pytest.fixture
+def scraper_find_elements_error():
+    with patch("src.web_scraper.scraper.webdriver") as mock_webdriver:
+        mock_webdriver.Chrome.return_value.find_elements.side_effect = Exception("no such element")
+        return Scraper(URL)
+
+
+def test_init_driver_error():
+    with patch("src.web_scraper.scraper.webdriver") as mock_webdriver:
+        mock_webdriver.Chrome.side_effect = Exception("WebDriver error")
+        with pytest.raises(Exception) as exception_raised:
+            Scraper(URL)
+        assert exception_raised.type == ScraperError, "Unexpected Exception type"
+        expected_message = "[ScraperError] Driver initialization failed. WebDriver error"
+        assert str(exception_raised.value) == expected_message, "Unexpected error message"
+
+
+def test_get_data(scraper_ok):
+    data = scraper_ok.get_news_data()
     assert data is not None, "Data should not be None"
     assert isinstance(data, list), "Data should be a list"
     assert isinstance(data[0], dict), "List elements should be dictionaries"
     assert data[0]["title"] == "Test Example", "Unexpected title data"
     assert data[0]["kicker"] == "Test Example", "Unexpected kicker data"
-    assert data[0]["image"] == "https://example.com/test", "Unexpected image data"
-    assert data[0]["link"] == "https://example.com/test", "Unexpected link data"
+    assert data[0]["image"] == EXAMPLE_LINK, "Unexpected image data"
+    assert data[0]["link"] == EXAMPLE_LINK, "Unexpected link data"
+
+
+def test_get_data_error(scraper_find_elements_error):
+    with pytest.raises(Exception) as exception_raised:
+        scraper_find_elements_error.get_news_data()
+    assert exception_raised.type == ScraperError, "Unexpected Exception type"
+    expected_message = "[ScraperError] Error found while scraping. no such element"
+    assert str(exception_raised.value) == expected_message, "Unexpected error message"

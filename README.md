@@ -9,23 +9,38 @@ Details: https://mia-platform.notion.site/Python-Code-Challenge-Scraping-and-Ing
 
 ## Instructions
 
-### How to run ?
+### How to 
 
-RUN Bash script
+* **Setup**
     
-    ```bash
-    ./deploy.sh
-    ```
+    1. Clone Github repository
 
-### Setup
+        ```bash
+        git colne git@github.com:nvoviedo-code/pipol_challenge.git
+        ```
+
+    2. Install dependencies
+
+        ```bash
+        pip install -r requirements.txt
+
+* **Run**
     
-1. Clone Github repository
+    Exectute the bash script:
+        
+        ```bash
+        ./deploy.sh
+        ```
 
-    ```bash
-    git colne git@github.com:nvoviedo-code/pipol_challenge.git
-    ```
 
-2. Install dependencies
+* **Test**
 
-    ```bash
-    pip install -r requirements.txt
+    1. Install pytest
+        ```bash
+        pip install pytest
+        ```
+    2. Run
+        ```bash
+        pytest
+        ```
+
