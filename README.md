@@ -16,19 +16,20 @@ Details: https://mia-platform.notion.site/Python-Code-Challenge-Scraping-and-Ing
     1. Clone Github repository
 
         ```bash
-        git colne git@github.com:nvoviedo-code/pipol_challenge.git
+        git clone git@github.com:nvoviedo-code/pipol_challenge.git
         ```
 
     2. Install dependencies
 
         ```bash
         pip install -r requirements.txt
+        ```
 
 * **Run**
     
-    Exectute the bash script:
-        
-        ```bash
+    Execute the bash script:
+
+       ```
         ./deploy.sh
         ```
 
