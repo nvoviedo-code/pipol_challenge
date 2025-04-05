@@ -43,7 +43,7 @@ def test_process(processor):
 
     # Check dataframe structure
     assert df.shape[0] == 2, "DataFrame should have 2 rows"
-    assert df.shape[1] == 5, "DataFrame should have 5 columns"
+    assert df.shape[1] == 7, "DataFrame should have 7 columns"
 
     assert isinstance(df["title"].iloc[0], str)
     assert isinstance(df["kicker"].iloc[0], str)

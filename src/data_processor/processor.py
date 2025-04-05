@@ -6,6 +6,10 @@ logger = logging.getLogger("Processor")
 
 
 class Processor:
+    """
+    Processor class to execute the post-processing of scraped data and
+    add new requested features.
+    """
     def __init__(self, data):
         self.data = data
 
