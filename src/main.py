@@ -1,12 +1,15 @@
 import logging
 import os
 
+from dotenv import load_dotenv
+
 from .data_processor.processor import Processor
 from .web_scraper.scraper import Scraper
 from .bigquery_client.client import BigQueryClient
 from .bigquery_client.credentials_parser import Credentials
 from .constants import URL
 
+load_dotenv(override=True)
 CREDENTIALS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
 # Configure logging

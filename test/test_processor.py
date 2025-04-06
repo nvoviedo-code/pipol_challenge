@@ -39,11 +39,11 @@ def test_process(processor):
 
     assert df["title_word_count"].iloc[0] == 11
     assert df["title_character_count"].iloc[0] == 69
-    assert df["capitalized_words"].iloc[0] == ["GLI", "Sangeeta", "Reddy", "Vice", "President", "Innovation"]
+    assert df["capitalized_words"].iloc[0] == '["GLI", "Sangeeta", "Reddy", "Vice", "President", "Innovation"]'
 
     # Check dataframe structure
     assert df.shape[0] == 2, "DataFrame should have 2 rows"
-    assert df.shape[1] == 7, "DataFrame should have 7 columns"
+    assert df.shape[1] == 8, "DataFrame should have 8 columns"
 
     assert isinstance(df["title"].iloc[0], str)
     assert isinstance(df["kicker"].iloc[0], str)

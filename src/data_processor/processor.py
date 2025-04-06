@@ -1,3 +1,4 @@
+import json
 import logging
 import pandas as pd
 
@@ -33,5 +34,11 @@ class Processor:
             self.calculate_character_count)
         df['capitalized_words'] = df['title'].apply(
             self.list_capitalized_words)
+        
+        # Serialize the capitalized words list
+        df['capitalized_words'] = df['capitalized_words'].apply(json.dumps)
 
+        # Add date column
+        df['date'] = pd.to_datetime('now').strftime("%d-%m-%Y")
+        
         return df
