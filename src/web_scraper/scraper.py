@@ -30,8 +30,9 @@ class Scraper():
             config.add_argument("--no-sandbox")
             config.add_argument("--disable-dev-shm-usage")
             config.add_argument("--disable-gpu")
+            
             web_driver = webdriver.Chrome(options=config)
-            web_driver.implicitly_wait(10)
+            web_driver.implicitly_wait(2)
             logger.info("WebDriver initialized.")
             
             logger.info(f"Opening URL: {self.url}")
