@@ -14,7 +14,7 @@ Project Details: [Python Code Challenge](https://mia-platform.notion.site/Python
 To get started, clone the GitHub repository locally:
 
 ```bash
-git clone git@github.com:nvoviedo-code/pipol_challenge.git
+git clone https://github.com/nvoviedo-code/pipol_challenge.git
 ```
 
 This project requires access to a Google Cloud Project with a properly configured BigQuery instance. Authentication is managed using a service account key.
